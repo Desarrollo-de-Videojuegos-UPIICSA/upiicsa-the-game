@@ -28,6 +28,7 @@ public class playerController : MonoBehaviour
     {
         hMove = Input.GetAxis("Horizontal");
         vMove = Input.GetAxis("Vertical");
+        speed = 7.44f; //le puse esta velocidad  considerando que el muñeco está caminando
         playerInput = new Vector3(hMove, 0, vMove);
         playerInput = Vector3.ClampMagnitude(playerInput, 1); //Magnitud de movimiento limitada a 1 (movimiento diagonal)
 
