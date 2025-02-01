@@ -18,6 +18,7 @@ public class playerController : MonoBehaviour
     private Vector3 camForward;
     private Vector3 camRight;
 
+
     void Start()
     {
         rigidbody = GetComponent<Rigidbody>();
