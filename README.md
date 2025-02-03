@@ -65,7 +65,11 @@ Mecánicas básicas:
 ## Créditos
 - **Dirección del Proyecto**: [Luis Diaz](https://www.instagram.com/unodetantosluises/)
 - **Game Designer**: Joel
+<<<<<<< HEAD
 - **Arte y Diseño**: Axel 
+=======
+- **Arte y Diseño**: German
+>>>>>>> arte-german
 - **Programación**: Andrik
 - **Música**: Armen
 ## Contacto
