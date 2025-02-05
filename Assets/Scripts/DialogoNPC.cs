@@ -11,10 +11,11 @@ public class DialogoNPC : MonoBehaviour
     [SerializeField] private GameObject panel;
     [SerializeField] private TMP_Text textoDialogo;
     [SerializeField, TextArea(1, 8)] private string[] lineasDialogo;
-    
+    [SerializeField] private playerController controller;
+    [SerializeField] private playerStateController estadoJugador;
     void Update()
     {
-        if (jugadorEnZona && Input.GetKeyDown(KeyCode.E))
+        if (jugadorEnZona && Input.GetButtonDown("Fire1"))
         {
             if (!dialogoIniciado)
             {
@@ -38,9 +39,14 @@ public class DialogoNPC : MonoBehaviour
         panel.SetActive(true);
         marcaDialogo.SetActive(false);
         lineasIndex = 0;
-        Time.timeScale = 0f; //Esto desactiva absolutamente todo el movimiento de la escena
-                             /*modificar para activar la animación de idle*/
         StartCoroutine(ShowLine());
+        controller.enabled = false;
+        estadoJugador.enabled = false;
+        Animator animator = estadoJugador.GetComponent<Animator>();
+        if (animator != null)
+        {
+            animator.SetBool("isWalking", false);
+        }
     }
 
     private void SiguienteLinea()
@@ -55,7 +61,8 @@ public class DialogoNPC : MonoBehaviour
             dialogoIniciado = false;
             panel.SetActive(false);
             marcaDialogo.SetActive(true);
-            Time.timeScale = 1f;
+            controller.enabled = true;
+            estadoJugador.enabled = true;
         }
     }
     private IEnumerator ShowLine()
@@ -64,7 +71,7 @@ public class DialogoNPC : MonoBehaviour
         foreach (char ch in lineasDialogo[lineasIndex])
         {
             textoDialogo.text += ch;
-            yield return new WaitForSecondsRealtime(0.05f); //velocidad del diálogo
+            yield return new WaitForSeconds(0.05f); //velocidad del diálogo
         }
     }
 
