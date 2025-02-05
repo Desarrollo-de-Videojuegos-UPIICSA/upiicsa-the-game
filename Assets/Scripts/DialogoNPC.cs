@@ -14,6 +14,13 @@ public class DialogoNPC : MonoBehaviour
     [SerializeField, TextArea(1, 8)] private string[] lineasDialogo;
     [SerializeField] private playerController controller;
     [SerializeField] private playerStateController estadoJugador;
+
+    Animator animator;
+
+    private void Start()
+    {
+        animator = GetComponent<Animator>();
+    }
     void Update()
     {
         if (jugadorEnZona && Input.GetButtonDown("Fire1"))
@@ -30,6 +37,7 @@ public class DialogoNPC : MonoBehaviour
             {
                 StopAllCoroutines();
                 textoDialogo.text = lineasDialogo[lineasIndex];
+                
             }
         }
     }
@@ -50,11 +58,13 @@ public class DialogoNPC : MonoBehaviour
         estadoJugador.enabled = false;
 
         // Detienen la animación de caminar
-        Animator animator = estadoJugador.GetComponent<Animator>();
-        if (animator != null)
+        Animator animatorPlayer = estadoJugador.GetComponent<Animator>();
+        if (animatorPlayer != null)
         {
-            animator.SetBool("isWalking", false);
+            animatorPlayer.SetBool("isWalking", false);
         }
+        // Animacion "Hablando" de secretaria
+        animator.SetBool("isTalking", true);
     }
     private void LateUpdate()
     {
@@ -83,6 +93,7 @@ public class DialogoNPC : MonoBehaviour
 
             // Congela al jugador en una posición válida
             controller.GetComponent<CharacterController>().Move(Vector3.zero);
+            animator.SetBool("isTalking", false);
         }
     }
     private IEnumerator ShowLine()
