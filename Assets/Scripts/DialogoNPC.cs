@@ -7,6 +7,7 @@ public class DialogoNPC : MonoBehaviour
     private bool jugadorEnZona;
     private bool dialogoIniciado;
     private int lineasIndex;
+    private Vector3 playerPositionDuringDialogue;
     [SerializeField] private GameObject marcaDialogo;
     [SerializeField] private GameObject panel;
     [SerializeField] private TMP_Text textoDialogo;
@@ -40,12 +41,26 @@ public class DialogoNPC : MonoBehaviour
         marcaDialogo.SetActive(false);
         lineasIndex = 0;
         StartCoroutine(ShowLine());
+
+        // Almacena la posición actual del jugador
+        playerPositionDuringDialogue = controller.transform.position;
+
+        // Desactiva el movimiento y las animaciones
         controller.enabled = false;
         estadoJugador.enabled = false;
+
+        // Detienen la animación de caminar
         Animator animator = estadoJugador.GetComponent<Animator>();
         if (animator != null)
         {
             animator.SetBool("isWalking", false);
+        }
+    }
+    private void LateUpdate()
+    {
+        if (dialogoIniciado)
+        {
+            controller.transform.position = playerPositionDuringDialogue;
         }
     }
 
@@ -61,8 +76,13 @@ public class DialogoNPC : MonoBehaviour
             dialogoIniciado = false;
             panel.SetActive(false);
             marcaDialogo.SetActive(true);
+
+            // Reactiva el movimiento y las animaciones
             controller.enabled = true;
             estadoJugador.enabled = true;
+
+            // Congela al jugador en una posición válida
+            controller.GetComponent<CharacterController>().Move(Vector3.zero);
         }
     }
     private IEnumerator ShowLine()
