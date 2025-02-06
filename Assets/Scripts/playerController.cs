@@ -6,7 +6,7 @@ public class playerController : MonoBehaviour
 {   //Variables de movimiento
     public CharacterController player; //Movimiento con componente CharacterController
 
-    private Rigidbody rigidbody; //Fisicas
+    //private Rigidbody rigidbody; //Fisicas
     private float hMove, vMove;
     private Vector3 playerInput;
 
@@ -19,6 +19,8 @@ public class playerController : MonoBehaviour
     private Vector3 camForward;
     private Vector3 camRight;
 
+    // Variable para controlar si el diálogo está activo
+    public bool isInDialogue = false;
 
     void Start()
     {
@@ -28,8 +30,17 @@ public class playerController : MonoBehaviour
 
     private void Update()
     {
-        hMove = Input.GetAxis("Horizontal");
-        vMove = Input.GetAxis("Vertical");
+        // Si el diálogo está activo, ignorar los inputs de movimiento
+        if (isInDialogue)
+        {
+            hMove = 0;
+            vMove = 0;
+        }
+        else
+        {
+            hMove = Input.GetAxis("Horizontal");
+            vMove = Input.GetAxis("Vertical");
+        }
         speed = 7.44f; //le puse esta velocidad  considerando que el muñeco está caminando
         playerInput = new Vector3(hMove, 0, vMove);
         playerInput = Vector3.ClampMagnitude(playerInput, 1); //Magnitud de movimiento limitada a 1 (movimiento diagonal)

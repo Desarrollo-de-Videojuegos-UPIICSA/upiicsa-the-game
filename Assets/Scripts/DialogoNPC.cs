@@ -7,7 +7,7 @@ public class DialogoNPC : MonoBehaviour
     private bool jugadorEnZona;
     private bool dialogoIniciado;
     private int lineasIndex;
-    private Vector3 playerPositionDuringDialogue;
+
     [SerializeField] private GameObject marcaDialogo;
     [SerializeField] private GameObject panel;
     [SerializeField] private TMP_Text textoDialogo;
@@ -21,6 +21,7 @@ public class DialogoNPC : MonoBehaviour
     {
         animator = GetComponent<Animator>();
     }
+
     void Update()
     {
         if (jugadorEnZona && Input.GetButtonDown("Fire1"))
@@ -37,7 +38,6 @@ public class DialogoNPC : MonoBehaviour
             {
                 StopAllCoroutines();
                 textoDialogo.text = lineasDialogo[lineasIndex];
-                
             }
         }
     }
@@ -50,11 +50,10 @@ public class DialogoNPC : MonoBehaviour
         lineasIndex = 0;
         StartCoroutine(ShowLine());
 
-        // Almacena la posición actual del jugador
-        playerPositionDuringDialogue = controller.transform.position;
+        // Ignora los inputs de movimiento en el controlador
+        controller.isInDialogue = true;
 
-        // Desactiva el movimiento y las animaciones
-        controller.enabled = false;
+        // Desactiva el script de estado del jugador
         estadoJugador.enabled = false;
 
         // Detienen la animación de caminar
@@ -63,15 +62,9 @@ public class DialogoNPC : MonoBehaviour
         {
             animatorPlayer.SetBool("isWalking", false);
         }
-        // Animacion "Hablando" de secretaria
+
+        // Animación "Hablando" de secretaria
         animator.SetBool("isTalking", true);
-    }
-    private void LateUpdate()
-    {
-        if (dialogoIniciado)
-        {
-            controller.transform.position = playerPositionDuringDialogue;
-        }
     }
 
     private void SiguienteLinea()
@@ -87,8 +80,10 @@ public class DialogoNPC : MonoBehaviour
             panel.SetActive(false);
             marcaDialogo.SetActive(true);
 
-            // Reactiva el movimiento y las animaciones
-            controller.enabled = true;
+            // Reactiva los inputs de movimiento en el controlador
+            controller.isInDialogue = false;
+
+            // Reactiva el script de estado del jugador
             estadoJugador.enabled = true;
 
             // Congela al jugador en una posición válida
@@ -96,13 +91,14 @@ public class DialogoNPC : MonoBehaviour
             animator.SetBool("isTalking", false);
         }
     }
+
     private IEnumerator ShowLine()
     {
         textoDialogo.text = string.Empty;
         foreach (char ch in lineasDialogo[lineasIndex])
         {
             textoDialogo.text += ch;
-            yield return new WaitForSeconds(0.05f); //velocidad del diálogo
+            yield return new WaitForSeconds(0.05f); // Velocidad del diálogo
         }
     }
 
@@ -114,6 +110,7 @@ public class DialogoNPC : MonoBehaviour
             marcaDialogo.SetActive(true);
         }
     }
+
     private void OnTriggerExit(Collider other)
     {
         if (other.gameObject.CompareTag("Player"))
